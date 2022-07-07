@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS mixes (
 CREATE TABLE IF NOT EXISTS tracks (
     id SERIAL PRIMARY KEY,
     name VARCHAR(90) NOT NULL,
-    duration INTERVAL MINUTE TO SECOND NOT NULL,    
+    duration INTEGER NOT NULL,
     album_id INTEGER REFERENCES albums(id)
 );
 
@@ -44,5 +44,3 @@ CREATE TABLE IF NOT EXISTS mixes_tracks (
     track_id INTEGER REFERENCES tracks(id),
     CONSTRAINT mt PRIMARY KEY (mix_id, track_id)
 );
-
-
