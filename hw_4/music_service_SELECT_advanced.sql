@@ -1,28 +1,28 @@
---1. Количество исполнителей в каждом жанре.
+--1. ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЁГ±ГЇГ®Г«Г­ГЁГІГҐГ«ГҐГ© Гў ГЄГ Г¦Г¤Г®Г¬ Г¦Г Г­Г°ГҐ.
 SELECT name, COUNT(singer_id) singers_q FROM genres g
 	JOIN genres_singers gs ON g.id = gs.genre_id
 	GROUP BY g.name
 	ORDER BY singers_q;
 
---2. Количество треков, вошедших в альбомы 2019-2020 годов.
+--2. ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГІГ°ГҐГЄГ®Гў, ГўГ®ГёГҐГ¤ГёГЁГµ Гў Г Г«ГјГЎГ®Г¬Г» 2019-2020 ГЈГ®Г¤Г®Гў.
 SELECT a.name, COUNT(t.id) tracks_q FROM albums a
 	JOIN tracks t ON a.id = t.album_id 
 	WHERE release_year IN (2019, 2020)
 	GROUP BY a.name;
 
---3. Средняя продолжительность треков по каждому альбому.	
-SELECT a.name, ROUND(AVG(t.duration),2) duration_avg FROM albums a 
+--3. Г‘Г°ГҐГ¤Г­ГїГї ГЇГ°Г®Г¤Г®Г«Г¦ГЁГІГҐГ«ГјГ­Г®Г±ГІГј ГІГ°ГҐГЄГ®Гў ГЇГ® ГЄГ Г¦Г¤Г®Г¬Гі Г Г«ГјГЎГ®Г¬Гі.	
+SELECT a.name, ROUND(AVG(t.duration), 2) duration_avg FROM albums a 
 	JOIN tracks t ON a.id = t.album_id 
 	GROUP BY a.name;
 
---4. Все исполнители, которые не выпустили альбомы в 2020 году.
+--4. Г‚Г±ГҐ ГЁГ±ГЇГ®Г«Г­ГЁГІГҐГ«ГЁ, ГЄГ®ГІГ®Г°Г»ГҐ Г­ГҐ ГўГ»ГЇГіГ±ГІГЁГ«ГЁ Г Г«ГјГЎГ®Г¬Г» Гў 2020 ГЈГ®Г¤Гі.
 SELECT s.name FROM singers s 
 	JOIN singers_albums sa ON s.id = sa.singer_id
 	JOIN albums a ON sa.album_id = a.id
 	WHERE a.release_year != 2020
 	GROUP BY s.name;
 
---5. Названия сборников, в которых присутствует конкретный исполнитель (Queen).
+--5. ГЌГ Г§ГўГ Г­ГЁГї Г±ГЎГ®Г°Г­ГЁГЄГ®Гў, Гў ГЄГ®ГІГ®Г°Г»Гµ ГЇГ°ГЁГ±ГіГІГ±ГІГўГіГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГЁГ±ГЇГ®Г«Г­ГЁГІГҐГ«Гј (Queen).
 SELECT m.name FROM mixes m 
 	JOIN mixes_tracks mt ON m.id = mt.mix_id
 	JOIN tracks t ON mt.track_id = t.id
@@ -32,7 +32,7 @@ SELECT m.name FROM mixes m
 	WHERE s.name LIKE 'Queen'
 	GROUP BY m.name;
 
---6. Название альбомов, в которых присутствуют исполнители более 1 жанра.
+--6. ГЌГ Г§ГўГ Г­ГЁГҐ Г Г«ГјГЎГ®Г¬Г®Гў, Гў ГЄГ®ГІГ®Г°Г»Гµ ГЇГ°ГЁГ±ГіГІГ±ГІГўГіГѕГІ ГЁГ±ГЇГ®Г«Г­ГЁГІГҐГ«ГЁ ГЎГ®Г«ГҐГҐ 1 Г¦Г Г­Г°Г .
 SELECT a.name, COUNT(DISTINCT g.id) genre_q FROM albums a 
 	JOIN singers_albums sa ON a.id = sa.album_id 
 	JOIN singers s ON sa.singer_id = s.id 
@@ -42,19 +42,19 @@ SELECT a.name, COUNT(DISTINCT g.id) genre_q FROM albums a
 	HAVING COUNT(DISTINCT g.id) > 1
 	ORDER BY a.name;
 
---7. Наименование треков, которые не входят в сборники.
+--7. ГЌГ ГЁГ¬ГҐГ­Г®ГўГ Г­ГЁГҐ ГІГ°ГҐГЄГ®Гў, ГЄГ®ГІГ®Г°Г»ГҐ Г­ГҐ ГўГµГ®Г¤ГїГІ Гў Г±ГЎГ®Г°Г­ГЁГЄГЁ.
 SELECT name, track_id track_in_mix FROM tracks t 
 	LEFT JOIN mixes_tracks mt ON t.id = mt.track_id
 	WHERE track_id IS NULL;	
 
---8. Исполнителя(-ей), написавшего самый короткий по продолжительности трек. 
+--8. Г€Г±ГЇГ®Г«Г­ГЁГІГҐГ«Гї(-ГҐГ©), Г­Г ГЇГЁГ±Г ГўГёГҐГЈГ® Г±Г Г¬Г»Г© ГЄГ®Г°Г®ГІГЄГЁГ© ГЇГ® ГЇГ°Г®Г¤Г®Г«Г¦ГЁГІГҐГ«ГјГ­Г®Г±ГІГЁ ГІГ°ГҐГЄ. 
 SELECT s.name, t.duration FROM singers s
 	JOIN singers_albums sa ON s.id = sa.singer_id 
 	JOIN albums a ON sa.album_id = a.id 
 	JOIN tracks t ON a.id = t.album_id
 	WHERE t.duration = (SELECT MIN(duration) FROM tracks);
 
---9. Название альбомов, содержащих наименьшее количество треков.
+--9. ГЌГ Г§ГўГ Г­ГЁГҐ Г Г«ГјГЎГ®Г¬Г®Гў, Г±Г®Г¤ГҐГ°Г¦Г Г№ГЁГµ Г­Г ГЁГ¬ГҐГ­ГјГёГҐГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГІГ°ГҐГЄГ®Гў.
 SELECT a.name, COUNT(t.id) tracks_q FROM albums a 
 	JOIN tracks t ON a.id = t.album_id 
 	GROUP BY a.name
